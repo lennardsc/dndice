@@ -3,6 +3,9 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from roll import roll
 from storage import DiceRollStorage
+from analysis import RollAnalysis
+import tkinter.scrolledtext as scrolledtext
+import requests
 
 def roll_dice():
     roll_input = entry.get()
@@ -32,6 +35,29 @@ def roll_dice():
     else:
         messagebox.showerror("Error", f"An error occurred: {rolls}")
 
+def analyze():
+    analysis = RollAnalysis("dice_rolls.db")
+    analysis.highest_lowest_median_by_day()
+    analysis.count_median_1_by_day()
+    analysis.count_20_by_day()
+    analysis.close_connection()
+
+def view_license():
+    license_url = "https://codeberg.org/lennardsc/dndice/raw/commit/33ab768ab57d3f6af621a9acdca5f79d107f6fd1/LICENSE"
+    response = requests.get(license_url)
+
+    if response.status_code == 200:
+        license_content = response.text
+
+        # Create a new Toplevel window to display the license
+        license_window = tk.Toplevel(root)
+        license_window.title("License")
+
+        # Create a scrolled text widget to display the license content
+        license_text = scrolledtext.ScrolledText(license_window, wrap=tk.WORD, width=80, height=30)
+        license_text.insert(tk.END, license_content)
+        license_text.pack(expand=True, fill=tk.BOTH)
+
 # Create main window
 root = tk.Tk()
 root.title("Dice Roller")
@@ -57,6 +83,13 @@ entry.pack(side=tk.LEFT)
 # Create roll button
 roll_button = tk.Button(root, text="Roll", command=roll_dice)
 roll_button.pack()
+
+# Create analyze button
+analyze_button = tk.Button(root, text="Analyze", command=analyze)
+analyze_button.pack()
+
+view_license_button = tk.Button(root, text="View License", command=view_license)
+view_license_button.pack()
 
 # Run the main event loop
 root.mainloop()

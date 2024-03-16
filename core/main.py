@@ -63,7 +63,7 @@ def view_license():
 
 # Create main window
 root = tk.Tk()
-root.title("Dice Roller")
+root.title("DNDICE")
 
 # Connect to database
 storage = DiceRollStorage("dice_rolls.db")

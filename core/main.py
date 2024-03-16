@@ -2,18 +2,23 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from roll import roll
+from storage import DiceRollStorage
 
 def roll_dice():
     roll_input = entry.get()
     result, rolls = roll(roll_input)
     if result is not None:
         messagebox.showinfo("Roll Result", f"Rolls: {', '.join(map(str, rolls))}\nTotal: {result}")
+        storage.insert_roll(roll_input, result)
     else:
         messagebox.showerror("Error", f"An error occurred: {rolls}")
 
 # Create main window
 root = tk.Tk()
 root.title("Dice Roller")
+
+# Connect to database
+storage = DiceRollStorage("dice_rolls.db")
 
 # Create label
 label = tk.Label(root, text="Enter dice roll (e.g. 2d6):")
@@ -36,3 +41,6 @@ roll_button.pack()
 
 # Run the main event loop
 root.mainloop()
+
+# Close database connection
+storage.close_connection()

@@ -20,12 +20,17 @@ def roll_dice():
             happy_label = tk.Label(root, image=happy_photo)
             happy_label.image = happy_photo
             happy_label.pack(side=tk.LEFT)
+        elif result == 69:
+            result69_image = Image.open("assets/dice_elf_69.png")
+            result69_photo = ImageTk.PhotoImage(result69_image)
+            result69_label = tk.Label(root, image=result69_photo)
+            result69_label.image = result69_photo
+            result69_label.pack(side=tk.LEFT)
 
         messagebox.showinfo("Roll Result", f"Rolls: {', '.join(map(str, rolls))}\nTotal: {result}")
         storage.insert_roll(roll_input, result)
     else:
         messagebox.showerror("Error", f"An error occurred: {rolls}")
-
 
 # Create main window
 root = tk.Tk()

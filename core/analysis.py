@@ -47,7 +47,7 @@ class RollAnalysis:
 
         rolls_by_day = defaultdict(list)
         for timestamp, result in rolls_1:
-            day = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S').date()
+            day = datetime.strptime(timestamp, '%Y-%m-%d').date()
             rolls_by_day[day].append(result)
 
         days = []

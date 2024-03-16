@@ -30,11 +30,11 @@ def roll_dice():
             result69_label.image = result69_photo
             result69_label.pack(side=tk.LEFT)
         elif result == 42:
-            result69_image = Image.open("assets/dice_elf_42.png")
-            result69_photo = ImageTk.PhotoImage(result69_image)
-            result69_label = tk.Label(root, image=result69_photo)
-            result69_label.image = result69_photo
-            result69_label.pack(side=tk.LEFT)
+            result42_image = Image.open("assets/dice_elf_42.png")
+            result42_photo = ImageTk.PhotoImage(result42_image)
+            result42_label = tk.Label(root, image=result42_photo)
+            result42_label.image = result42_photo
+            result42_label.pack(side=tk.LEFT)
 
         messagebox.showinfo("Roll Result", f"Rolls: {', '.join(map(str, rolls))}\nTotal: {result}")
         storage.insert_roll(roll_input, result)

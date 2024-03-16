@@ -8,10 +8,24 @@ def roll_dice():
     roll_input = entry.get()
     result, rolls = roll(roll_input)
     if result is not None:
+        if result == 1:
+            sad_image = Image.open("assets/dice_elf_sad.png")
+            sad_photo = ImageTk.PhotoImage(sad_image)
+            sad_label = tk.Label(root, image=sad_photo)
+            sad_label.image = sad_photo
+            sad_label.pack(side=tk.LEFT)
+        elif result == 20:
+            happy_image = Image.open("assets/dice_elf_happy.png")
+            happy_photo = ImageTk.PhotoImage(happy_image)
+            happy_label = tk.Label(root, image=happy_photo)
+            happy_label.image = happy_photo
+            happy_label.pack(side=tk.LEFT)
+
         messagebox.showinfo("Roll Result", f"Rolls: {', '.join(map(str, rolls))}\nTotal: {result}")
         storage.insert_roll(roll_input, result)
     else:
         messagebox.showerror("Error", f"An error occurred: {rolls}")
+
 
 # Create main window
 root = tk.Tk()

@@ -7,21 +7,19 @@ class DiceRollStorage:
         self.create_table()
 
     def create_table(self):
-        cursor = self.conn.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS dice_rolls (
-                            id INTEGER PRIMARY KEY,
-                            roll_text TEXT,
-                            roll_result INTEGER,
-                            timestamp TEXT
-                        )''')
-        self.conn.commit()
+        with self.conn:
+            self.conn.execute('''CREATE TABLE IF NOT EXISTS dice_rolls (
+                                    id INTEGER PRIMARY KEY,
+                                    roll_text TEXT,
+                                    roll_result INTEGER,
+                                    timestamp TEXT
+                                )''')
 
     def insert_roll(self, roll_text, roll_result):
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        cursor = self.conn.cursor()
-        cursor.execute('''INSERT INTO dice_rolls (roll_text, roll_result, timestamp)
-                        VALUES (?, ?, ?)''', (roll_text, roll_result, timestamp))
-        self.conn.commit()
+        with self.conn:
+            self.conn.execute('''INSERT INTO dice_rolls (roll_text, roll_result, timestamp)
+                                VALUES (?, ?, ?)''', (roll_text, roll_result, timestamp))
 
     def close_connection(self):
         self.conn.close()

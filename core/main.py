@@ -1,47 +1,43 @@
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
+import requests
+import tkinter.scrolledtext as scrolledtext
 from roll import roll
 from storage import DiceRollStorage
 from analysis import RollAnalysis
-import tkinter.scrolledtext as scrolledtext
-import requests
 
 def roll_dice():
+    """Rolls the dice based on user input and displays the result."""
     roll_input = entry.get()
     result, rolls = roll(roll_input)
-    if result is not None:
-        if result == 1:
-            sad_image = Image.open("assets/dice_elf_sad.png")
-            sad_photo = ImageTk.PhotoImage(sad_image)
-            sad_label = tk.Label(root, image=sad_photo)
-            sad_label.image = sad_photo
-            sad_label.pack(side=tk.LEFT)
-        elif result == 20:
-            happy_image = Image.open("assets/dice_elf_happy.png")
-            happy_photo = ImageTk.PhotoImage(happy_image)
-            happy_label = tk.Label(root, image=happy_photo)
-            happy_label.image = happy_photo
-            happy_label.pack(side=tk.LEFT)
-        elif result == 69:
-            result69_image = Image.open("assets/dice_elf_69.png")
-            result69_photo = ImageTk.PhotoImage(result69_image)
-            result69_label = tk.Label(root, image=result69_photo)
-            result69_label.image = result69_photo
-            result69_label.pack(side=tk.LEFT)
-        elif result == 42:
-            result42_image = Image.open("assets/dice_elf_42.png")
-            result42_photo = ImageTk.PhotoImage(result42_image)
-            result42_label = tk.Label(root, image=result42_photo)
-            result42_label.image = result42_photo
-            result42_label.pack(side=tk.LEFT)
 
+    # Display dice elf image based on result
+    if result == 1:
+        image_path = "assets/dice_elf_sad.png"
+    elif result == 20:
+        image_path = "assets/dice_elf_happy.png"
+    elif result == 69:
+        image_path = "assets/dice_elf_69.png"
+    elif result == 42:
+        image_path = "assets/dice_elf_42.png"
+    else:
+        image_path = "assets/dice_elf.png"
+
+    image = Image.open(image_path)
+    photo = ImageTk.PhotoImage(image)
+    image_label.configure(image=photo)
+    image_label.image = photo
+
+    # Show roll result
+    if result is not None:
         messagebox.showinfo("Roll Result", f"Rolls: {', '.join(map(str, rolls))}\nTotal: {result}")
         storage.insert_roll(roll_input, result)
     else:
         messagebox.showerror("Error", f"An error occurred: {rolls}")
 
 def analyze():
+    """Performs analysis on dice rolls and displays the results."""
     analysis = RollAnalysis("dice_rolls.db")
     analysis.highest_lowest_median_by_day()
     analysis.count_median_1_by_day()
@@ -49,6 +45,7 @@ def analyze():
     analysis.close_connection()
 
 def view_license():
+    """Displays the license text in a new window."""
     license_url = "https://codeberg.org/lennardsc/dndice/raw/commit/33ab768ab57d3f6af621a9acdca5f79d107f6fd1/LICENSE"
     response = requests.get(license_url)
 
@@ -94,6 +91,7 @@ roll_button.pack()
 analyze_button = tk.Button(root, text="Analyze", command=analyze)
 analyze_button.pack()
 
+# Create view license button
 view_license_button = tk.Button(root, text="View License", command=view_license)
 view_license_button.pack()
 

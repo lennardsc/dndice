@@ -14,21 +14,16 @@ def roll_dice():
     roll_input = entry.get()
     result, rolls = roll(roll_input)
 
-    # Display dice elf image based on result
-    if result == 1:
-        image_path = "assets/dice_elf_sad.png"
-    elif result == 20:
-        image_path = "assets/dice_elf_happy.png"
-    elif result == 69:
-        image_path = "assets/dice_elf_69.png"
-    elif result == 42:
-        image_path = "assets/dice_elf_42.png"
-    elif result == 21:
-        image_path = "assets/dice_elf_21.png"
-    elif result == 18:
-        image_path = "assets/dice_elf_18.png"
+    # Display dice image based on result and selected race
+    if selected_race.get() == "Elf":
+        image_prefix = "dice_elf"
+    elif selected_race.get() == "Druid":
+        image_prefix = "dice_druid"
+
+    if result in [1, 20, 69, 42, 21, 18]:
+        image_path = f"assets/{image_prefix}_{result}.png"
     else:
-        image_path = "assets/dice_elf.png"
+        image_path = f"assets/{image_prefix}.png"
 
     image = Image.open(image_path)
     photo = ImageTk.PhotoImage(image)
@@ -72,7 +67,11 @@ def open_charaktersheets():
 
     char_sheet_app = CharacterSheet(char_sheet_window)
 
-# Create main window
+    # Example usage:
+    char_sheet_app.create_charakter_sheet("Character 1")
+    char_sheet_app.view_charakter_sheet("Character 1")
+    char_sheet_app.edit_charakter_sheet("Character 1", "Class", "Warrior")
+
 root = tk.Tk()
 root.title("DNDICE")
 
@@ -94,6 +93,12 @@ image_label.pack(side=tk.LEFT)
 entry = tk.Entry(root, width=20)
 entry.pack(side=tk.LEFT)
 
+# Create dropdown menu for selecting race
+selected_race = tk.StringVar(root)
+selected_race.set("Elf")  # Default race is Elf
+race_dropdown = tk.OptionMenu(root, selected_race, "Elf", "Druid")
+race_dropdown.pack(side=tk.LEFT)
+
 # Create roll button
 roll_button = tk.Button(root, text="Roll", command=roll_dice)
 roll_button.pack()
@@ -108,7 +113,6 @@ charaktersheets_button.pack()
 # Create view license button
 view_license_button = tk.Button(root, text="View License", command=view_license)
 view_license_button.pack()
-
 
 # Run the main event loop
 root.mainloop()

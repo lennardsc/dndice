@@ -6,6 +6,7 @@ import tkinter.scrolledtext as scrolledtext
 from roll import roll
 from storage import DiceRollStorage
 from analysis import RollAnalysis
+from charaktersheet import CharacterSheet
 
 def roll_dice():
     """Rolls the dice based on user input and displays the result."""
@@ -21,6 +22,10 @@ def roll_dice():
         image_path = "assets/dice_elf_69.png"
     elif result == 42:
         image_path = "assets/dice_elf_42.png"
+    elif result == 21:
+        image_path = "assets/dice_elf_21.png"
+    elif result == 18:
+        image_path = "assets/dice_elf_18.png"
     else:
         image_path = "assets/dice_elf.png"
 
@@ -60,6 +65,11 @@ def view_license():
         license_text = scrolledtext.ScrolledText(license_window, wrap=tk.WORD, width=80, height=30)
         license_text.insert(tk.END, license_content)
         license_text.pack(expand=True, fill=tk.BOTH)
+def open_charaktersheets():
+    char_sheet_window = tk.Toplevel(root)
+    char_sheet_window.title("Character Sheets")
+
+    char_sheet_app = CharacterSheet(char_sheet_window)
 
 # Create main window
 root = tk.Tk()
@@ -91,9 +101,13 @@ roll_button.pack()
 analyze_button = tk.Button(root, text="Analyze", command=analyze)
 analyze_button.pack()
 
+charaktersheets_button = tk.Button(root, text="Character Sheets", command=open_charaktersheets)
+charaktersheets_button.pack()
+
 # Create view license button
 view_license_button = tk.Button(root, text="View License", command=view_license)
 view_license_button.pack()
+
 
 # Run the main event loop
 root.mainloop()

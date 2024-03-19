@@ -37,7 +37,9 @@ def roll_dice():
     # Show roll result
     if result is not None:
         messagebox.showinfo("Roll Result", f"Rolls: {', '.join(map(str, rolls))}\nTotal: {result}")
-        storage.insert_roll(roll_input, result)
+        num_dice = int(roll_input.split('d')[0])
+        num_sides = int(roll_input.split('d')[1])
+        storage.insert_roll(num_dice, num_sides, result)
     else:
         messagebox.showerror("Error", f"An error occurred: {rolls}")
 

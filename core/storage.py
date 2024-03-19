@@ -8,40 +8,66 @@ class DiceRollStorage:
 
     def create_tables(self):
         with self.conn:
-            # Create dimensions
-            self.conn.execute('''CREATE TABLE IF NOT EXISTS dice_types (
-                                    id INTEGER PRIMARY KEY,
-                                    num_dice INTEGER,
-                                    num_sides INTEGER
+            self.conn.execute('''CREATE TABLE IF NOT EXISTS dim_date (
+                                    date_id INTEGER PRIMARY KEY,
+                                    date TEXT
                                 )''')
-            # Create fact table
-            self.conn.execute('''CREATE TABLE IF NOT EXISTS roll_results (
-                                    id INTEGER PRIMARY KEY,
-                                    dice_type_id INTEGER,
-                                    result INTEGER,
-                                    timestamp TEXT,
-                                    FOREIGN KEY (dice_type_id) REFERENCES dice_types(id)
+            self.conn.execute('''CREATE TABLE IF NOT EXISTS dim_result (
+                                    result_id INTEGER PRIMARY KEY,
+                                    result INTEGER
+                                )''')
+            self.conn.execute('''CREATE TABLE IF NOT EXISTS fact_rolls (
+                                    roll_id INTEGER PRIMARY KEY,
+                                    date_id INTEGER,
+                                    result_id INTEGER,
+                                    FOREIGN KEY (date_id) REFERENCES dim_date(date_id),
+                                    FOREIGN KEY (result_id) REFERENCES dim_result(result_id)
                                 )''')
 
-    def insert_roll(self, num_dice, num_sides, result):
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    def insert_roll(self, date, result):
+        date_id = self._get_or_insert_date(date)
+        result_id = self._get_or_insert_result(result)
         with self.conn:
-            # Insert into dimensions and get the id
-            dice_type_id = self.insert_or_get_dice_type_id(num_dice, num_sides)
-            # Insert into fact table
-            self.conn.execute('''INSERT INTO roll_results (dice_type_id, result, timestamp)
-                                VALUES (?, ?, ?)''', (dice_type_id, result, timestamp))
+            self.conn.execute('''INSERT INTO fact_rolls (date_id, result_id)
+                                VALUES (?, ?)''', (date_id, result_id))
 
-    def insert_or_get_dice_type_id(self, num_dice, num_sides):
-        # Check if the dice type already exists
-        cursor = self.conn.execute('''SELECT id FROM dice_types WHERE num_dice=? AND num_sides=?''', (num_dice, num_sides))
-        row = cursor.fetchone()
-        if row:
-            return row[0]
+    def _get_or_insert_date(self, date):
+        with self.conn:
+            cursor = self.conn.execute('''SELECT date_id FROM dim_date WHERE date = ?''', (date,))
+            date_id = cursor.fetchone()
+            if date_id is not None:
+                return date_id[0]
+            else:
+                cursor = self.conn.execute('''INSERT INTO dim_date (date) VALUES (?)''', (date,))
+                return cursor.lastrowid
+
+    def _get_or_insert_result(self, result):
+        with self.conn:
+            cursor = self.conn.execute('''SELECT result_id FROM dim_result WHERE result = ?''', (result,))
+            result_id = cursor.fetchone()
+            if result_id is not None:
+                return result_id[0]
+            else:
+                cursor = self.conn.execute('''INSERT INTO dim_result (result) VALUES (?)''', (result,))
+                return cursor.lastrowid
+
+    def get_roll_stats_by_day(self, result=None):
+        query = '''SELECT d.date, COUNT(*) AS count, AVG(r.result) AS median
+            FROM dim_date d
+            JOIN fact_rolls fr ON d.date_id = fr.date_id
+            JOIN dim_result r ON fr.result_id = r.result_id
+            {}
+            GROUP BY d.date'''.format('WHERE r.result = ?' if result is not None else '')
+
+        if result is not None:
+            with self.conn:
+                cursor = self.conn.execute(query, (result,))
         else:
-            # Insert and return the id
-            cursor = self.conn.execute('''INSERT INTO dice_types (num_dice, num_sides) VALUES (?, ?)''', (num_dice, num_sides))
-            return cursor.lastrowid
+            with self.conn:
+                cursor = self.conn.execute(query)
+
+        return cursor.fetchall()
+
 
     def close_connection(self):
         self.conn.close()

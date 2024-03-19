@@ -13,3 +13,4 @@ def roll(roll):
         return None, f"Invalid roll format: {err}"
     except Exception as err:
         return None, str(err)
+

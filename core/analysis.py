@@ -3,17 +3,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 from collections import defaultdict
+from storage import DiceRollStorage
 
 class RollAnalysis:
     def __init__(self, db_file):
-        self.conn = sqlite3.connect(db_file)
+        self.storage = DiceRollStorage(db_file)
 
-    def plot_roll_stats_by_day(self, query, label, y_label, title):
+    def plot_roll_stats_by_day(self, rolls, label, y_label, title):
         try:
-            cursor = self.conn.cursor()
-            cursor.execute(query)
-            rolls = cursor.fetchall()
-
             rolls_by_day = defaultdict(list)
             for timestamp, result in rolls:
                 day = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S').date()
@@ -38,16 +35,16 @@ class RollAnalysis:
             print(f"An error occurred: {e}")
 
     def highest_lowest_median_by_day(self):
-        query = '''SELECT timestamp, roll_result FROM dice_rolls'''
-        self.plot_roll_stats_by_day(query, 'Median', 'Result', 'Highest, Lowest, and Median Rolls by Day')
+        rolls = self.storage.get_roll_stats_by_day()
+        self.plot_roll_stats_by_day(rolls, 'Median', 'Result', 'Highest, Lowest, and Median Rolls by Day')
 
     def count_median_1_by_day(self):
-        query = '''SELECT timestamp, roll_result FROM dice_rolls WHERE roll_result = 1'''
-        self.plot_roll_stats_by_day(query, 'Count', 'Count', 'Count of Rolls with Result 1 by Day')
+        rolls = self.storage.get_roll_stats_by_day(result=1)
+        self.plot_roll_stats_by_day(rolls, 'Count', 'Count', 'Count of Rolls with Result 1 by Day')
 
     def count_20_by_day(self):
-        query = '''SELECT timestamp, roll_result FROM dice_rolls WHERE roll_result = 20'''
-        self.plot_roll_stats_by_day(query, 'Count', 'Count', 'Count of Rolls with Result 20 by Day')
+        rolls = self.storage.get_roll_stats_by_day(result=20)
+        self.plot_roll_stats_by_day(rolls, 'Count', 'Count', 'Count of Rolls with Result 20 by Day')
 
     def close_connection(self):
-        self.conn.close()
+        self.storage.close_connection()

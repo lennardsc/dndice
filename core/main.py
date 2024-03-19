@@ -7,6 +7,7 @@ from roll import roll
 from storage import DiceRollStorage
 from analysis import RollAnalysis
 from charaktersheet import CharacterSheet
+from datetime import datetime
 
 def roll_dice():
     """Rolls the dice based on user input and displays the result."""
@@ -37,9 +38,7 @@ def roll_dice():
     # Show roll result
     if result is not None:
         messagebox.showinfo("Roll Result", f"Rolls: {', '.join(map(str, rolls))}\nTotal: {result}")
-        num_dice = int(roll_input.split('d')[0])
-        num_sides = int(roll_input.split('d')[1])
-        storage.insert_roll(num_dice, num_sides, result)
+        storage.insert_roll(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), result)  # Pass current date and result
     else:
         messagebox.showerror("Error", f"An error occurred: {rolls}")
 

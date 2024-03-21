@@ -55,26 +55,23 @@ class DiceRollStorage:
 
 
     def get_roll_stats_by_day(self, result=None):
-        if result is not None:
-            query = '''SELECT d.date, COUNT(*) AS count, AVG(r.result) AS median
+        with self.conn.cursor() as cursor:
+            if result is not None:
+                query = '''SELECT d.date, COUNT(*) AS count, AVG(r.result) AS median
                     FROM dim_date d
                     JOIN fact_rolls fr ON d.date_id = fr.date_id
                     JOIN dim_result r ON fr.result_id = r.result_id
                     WHERE r.result = ?
                     GROUP BY d.date'''
-            with self.conn.cursor() as cursor:
                 cursor.execute(query, (result,))
-        else:
-            query = '''SELECT d.date, COUNT(*) AS count, AVG(r.result) AS median
+            else:
+                query = '''SELECT d.date, COUNT(*) AS count, AVG(r.result) AS median
                     FROM dim_date d
                     JOIN fact_rolls fr ON d.date_id = fr.date_id
                     JOIN dim_result r ON fr.result_id = r.result_id
                     GROUP BY d.date'''
-            with self.conn.cursor() as cursor:
                 cursor.execute(query)
 
-        return cursor.fetchall()
-
-
+            return cursor.fetchall()
     def close_connection(self):
-        self.conn.close()
+        self.conn.close()  # Close the connection

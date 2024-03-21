@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 from collections import defaultdict
-from storage import DiceRollStorage
+from storage import DiceRollStorage  # Import the DiceRollStorage class from the updated storage.py file
 
 class RollAnalysis:
     def __init__(self, db_file):
-        self.storage = DiceRollStorage(db_file)
+        self.storage = DiceRollStorage(db_file)  # Use the new DiceRollStorage class with DuckDB
 
     def plot_roll_stats_by_day(self, rolls, label, y_label, title):
         try:

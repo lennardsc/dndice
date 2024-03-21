@@ -8,11 +8,19 @@ from storage import DiceRollStorage
 from analysis import RollAnalysis
 from charaktersheet import CharacterSheet
 from datetime import datetime
+import random
 
 def roll_dice():
     """Rolls the dice based on user input and displays the result."""
     roll_input = entry.get()
     result, rolls = roll(roll_input)
+
+    # Check if the result is 69, 1, or 20
+    if result in [69, 1, 20]:
+        global consecutive_special_rolls
+        consecutive_special_rolls += 1
+    else:
+        consecutive_special_rolls = 0
 
     # Display dice image based on result and selected race
     if selected_race.get() == "Elf":
@@ -21,8 +29,8 @@ def roll_dice():
         image_prefix = "dice_drow"
     elif selected_race.get() == "Halbelf":
         image_prefix = "dice_helf"
-    elif selected_race.get() =="Mage":
-        image_prefix= "dice_mage"
+    elif selected_race.get() == "Mage":
+        image_prefix = "dice_mage"
 
     if result in [1, 20, 69, 42, 21, 18]:
         image_path = f"assets/{image_prefix}_{result}.png"
@@ -38,8 +46,23 @@ def roll_dice():
     if result is not None:
         messagebox.showinfo("Roll Result", f"Rolls: {', '.join(map(str, rolls))}\nTotal: {result}")
         storage.insert_roll(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), result)  # Pass current date and result
+
+        # Check if there are 3 consecutive special rolls
+        if consecutive_special_rolls >= 3:
+            # Randomly select the image to display
+            judge_image_path = random.choice(["assets/dm_judge.png", "assets/dm_judge_2.png"])
+            judge_image = Image.open(judge_image_path)
+            judge_photo = ImageTk.PhotoImage(judge_image)
+            judge_window = tk.Toplevel(root)
+            judge_label = tk.Label(judge_window, image=judge_photo)
+            judge_label.image = judge_photo
+            judge_label.pack()
+
     else:
         messagebox.showerror("Error", f"An error occurred: {rolls}")
+
+# Global variable to track consecutive special rolls
+consecutive_special_rolls = 0
 
 def analyze():
     """Performs analysis on dice rolls and displays the results."""

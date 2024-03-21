@@ -19,8 +19,10 @@ def roll_dice():
         image_prefix = "dice_elf"
     elif selected_race.get() == "Drow":
         image_prefix = "dice_drow"
-    elif selected_race.ge() == "Halbelf":
+    elif selected_race.get() == "Halbelf":
         image_prefix = "dice_helf"
+    elif selected_race.get() =="Mage":
+        image_prefix= "dice_mage"
 
     if result in [1, 20, 69, 42, 21, 18]:
         image_path = f"assets/{image_prefix}_{result}.png"
@@ -98,7 +100,7 @@ entry.pack(side=tk.LEFT)
 # Create dropdown menu for selecting race
 selected_race = tk.StringVar(root)
 selected_race.set("Elf")  # Default race is Elf
-race_dropdown = tk.OptionMenu(root, selected_race, "Elf", "Drow","Halfelf")
+race_dropdown = tk.OptionMenu(root, selected_race, "Elf", "Drow","Halbelf","Mage")
 race_dropdown.pack(side=tk.LEFT)
 
 # Create roll button

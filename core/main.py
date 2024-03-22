@@ -33,9 +33,9 @@ def roll_dice():
         image_prefix = "dice_mage"
 
     if result in [1, 20, 69, 42, 21, 18]:
-        image_path = f"assets/{image_prefix}_{result}.png"
+        image_path = f"core/assets/{image_prefix}_{result}.png"
     else:
-        image_path = f"assets/{image_prefix}.png"
+        image_path = f"core/assets/{image_prefix}.png"
 
     image = Image.open(image_path)
     photo = ImageTk.PhotoImage(image)
@@ -50,7 +50,7 @@ def roll_dice():
         # Check if there are 3 consecutive special rolls
         if consecutive_special_rolls >= 3:
             # Randomly select the image to display
-            judge_image_path = random.choice(["assets/dm_judge.png", "assets/dm_judge_2.png"])
+            judge_image_path = random.choice(["core/assets/dm_judge.png", "assets/dm_judge_2.png"])
             judge_image = Image.open(judge_image_path)
             judge_photo = ImageTk.PhotoImage(judge_image)
             judge_window = tk.Toplevel(root)
@@ -110,7 +110,7 @@ label = tk.Label(root, text="Enter dice roll (e.g. 2d6):")
 label.pack()
 
 # Load and display image
-image = Image.open("assets/dice_elf.png")
+image = Image.open("core/assets/dice_elf.png")
 photo = ImageTk.PhotoImage(image)
 image_label = tk.Label(root, image=photo)
 image_label.image = photo  # to keep reference

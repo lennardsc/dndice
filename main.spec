@@ -9,7 +9,7 @@ a = Analysis(
     ('core', 'charaktersheet.py'),
     ('core', 'roll.py'),
     ('core', 'storage.py'),
-    ('core/assets/*.png', '')],
+    ('core/assets/*.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

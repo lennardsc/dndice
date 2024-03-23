@@ -2,14 +2,10 @@
 
 
 a = Analysis(
-    ['core/main.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('core/analysis.py'),
-    ('core/charaktersheet.py'),
-    ('core/roll.py'),
-    ('core/storage.py'),
-    ('core/assets/*.png')],
+    datas=[('assets/*.png')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

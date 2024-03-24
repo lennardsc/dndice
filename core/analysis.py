@@ -1,5 +1,6 @@
 import sqlite3
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 from datetime import datetime
 from collections import defaultdict
@@ -7,7 +8,7 @@ from storage import DiceRollStorage  # Import the DiceRollStorage class from the
 
 class RollAnalysis:
     def __init__(self, db_file):
-        self.storage = DiceRollStorage(db_file)  # Use the new DiceRollStorage class with DuckDB
+        self.storage = DiceRollStorage(db_file)
 
     def plot_roll_stats_by_day(self, rolls, label, y_label, title):
         try:
@@ -22,8 +23,9 @@ class RollAnalysis:
                 days.append(day)
                 values.append(np.median(rolls))
 
+            # Use Seaborn for plotting
             plt.figure(figsize=(10, 6))
-            plt.bar(days, values, label=label)
+            sns.barplot(x=days, y=values, label=label)
             plt.xlabel('Date')
             plt.ylabel(y_label)
             plt.title(title)

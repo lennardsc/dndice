@@ -1,0 +1,65 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Executable
+    runs-on: windows-latest
+
+    steps:
+      # Checkout Repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12  # Passe die Version bei Bedarf an
+
+      # Install Dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # Create Executable with PyInstaller
+      - name: Build Executable
+        run: |
+          pyinstaller --onefile --noconsole --add-data "images;images" main.py
+        shell: cmd
+
+      # Create Version Number
+      - name: Generate version number
+        id: version
+        run: |
+          git fetch --tags
+          latest_tag=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+          echo "Latest tag: $latest_tag"
+          version=$(echo $latest_tag | awk -F. -v OFS=. '{$NF+=1; print}')
+          echo "Next version: $version"
+          echo "version=$version" >> $GITHUB_ENV
+
+      # Upload Executable
+      - name: Upload Executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: "Dndice-${{ env.version }}.exe"
+          path: dist/dndice.exe
+
+      # Tag the Release
+      - name: Create Git Tag
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ env.version }}
+          git push origin ${{ env.version }}
